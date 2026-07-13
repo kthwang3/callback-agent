@@ -1,0 +1,5 @@
+test/
+.venv/
+__pycache__/
+.env
+*.Zone.Identifier
