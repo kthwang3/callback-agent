@@ -4,7 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import asyncio
 from db import save_call
-
+from sms import send_sms
 load_dotenv()
 client = OpenAI()
 app = FastAPI()
@@ -39,7 +39,7 @@ REASON: This should apply to EVERY call, not just appointments. Keep a brief, cl
 
 GATHERING INFO: Figure out what the caller needs. If they want to make an appointment, determine: whether they're a new or returning patient, the type of appointment (e.g. cleaning, toothache exam), and whether Sunday or Wednesday works better for them. If it's not an appointment, ask what else you can help with.
 
-CALLBACK NUMBER: You may already have the caller's number from caller ID. If so, confirm it's correct by reading it back in the 3-3-4 digit format like "one two three, four five six, seven eight nine one". Do not read out the international country code at the beginning like '+1'. Wait for a clear "yes" -- don't assume it's right, and don't assume it's the number they want called back on. If you don't have a number, ask for one and confirm it the same way, digit-by-digit. Always get the caller's name too. Just first name is fine.
+CALLBACK NUMBER: You may already have the caller's number from caller ID. If so, confirm it's correct by reading it back in the 3-3-4 digit format like "one two three, four five six, seven eight nine one". Do not read out the international country code at the beginning like '+1', read the last ten digits only. Wait for a clear "yes" -- don't assume it's right, and don't assume it's the number they want called back on. If you don't have a number, ask for one and confirm it the same way, digit-by-digit. Always get the caller's name too. Just first name is fine.
 
 EMERGENCIES: If anything the caller describes sounds like a real dental emergency -- severe pain, swelling, trauma, or uncontrolled bleeding -- take it seriously immediately. Tell them to seek urgent care or call an emergency line if it's serious, and let them know this will be flagged for an urgent callback. Mark this as urgent right away, even if the conversation continues normally afterward. Always read emergency numbers like 911 as 'nine-one-one', not 'nine-hundred-eleven'.
 
@@ -152,10 +152,11 @@ async def websocket_endpoint(websocket: WebSocket):
                     await websocket.send_text(json.dumps({"type": "end"}))
                     break
     except WebSocketDisconnect:
-        print("Call Ended")
+        print("Websocket cleanly disconnected")
 
     finally:
         if call_sid and call_sid in sessions:
             await save_call(sessions[call_sid])
-            print("Call Ended: check here when disconnected")
+            await send_sms(sessions[call_sid])
+            print("Call Ended")
             del sessions[call_sid]
