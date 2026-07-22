@@ -3,6 +3,7 @@ import json
 from openai import OpenAI
 from dotenv import load_dotenv
 import asyncio
+from db import save_call
 
 load_dotenv()
 client = OpenAI()
@@ -14,7 +15,7 @@ async def root():
     return {"message": "hello world"}
 
 
-WS_URL = "wss://oem-cheers-brought-maps.trycloudflare.com/ws"
+WS_URL = "wss://pillow-gdp-vacations-management.trycloudflare.com/ws"
 
 
 @app.post("/voice")
@@ -38,13 +39,13 @@ REASON: This should apply to EVERY call, not just appointments. Keep a brief, cl
 
 GATHERING INFO: Figure out what the caller needs. If they want to make an appointment, determine: whether they're a new or returning patient, the type of appointment (e.g. cleaning, toothache exam), and whether Sunday or Wednesday works better for them. If it's not an appointment, ask what else you can help with.
 
-CALLBACK NUMBER: You may already have the caller's number from caller ID. If so, confirm it's correct by reading it back in the 3-3-4 digit format like "one two three, four five six, seven eight nine one" and waiting for a clear "yes" -- don't assume it's right, and don't assume it's the number they want called back on. If you don't have a number, ask for one and confirm it the same way, digit-by-digit. Always get the caller's name too. Just first name is fine.
+CALLBACK NUMBER: You may already have the caller's number from caller ID. If so, confirm it's correct by reading it back in the 3-3-4 digit format like "one two three, four five six, seven eight nine one". Do not read out the international country code at the beginning like '+1'. Wait for a clear "yes" -- don't assume it's right, and don't assume it's the number they want called back on. If you don't have a number, ask for one and confirm it the same way, digit-by-digit. Always get the caller's name too. Just first name is fine.
 
 EMERGENCIES: If anything the caller describes sounds like a real dental emergency -- severe pain, swelling, trauma, or uncontrolled bleeding -- take it seriously immediately. Tell them to seek urgent care or call an emergency line if it's serious, and let them know this will be flagged for an urgent callback. Mark this as urgent right away, even if the conversation continues normally afterward. Always read emergency numbers like 911 as 'nine-one-one', not 'nine-hundred-eleven'.
 
 IF THE CALLER WANTS TO LEAVE: If the caller says they don't have time, want a callback instead, or want to speak to a person, stop asking further questions immediately. Take whatever you already have and wrap up gracefully -- never force them to finish answering everything.
 
-ENDING THE CALL: Only wrap up when the caller gives a clear signal they're done -- for example "goodbye," "that's all," or they have nothing else after you've addressed their request. A brief pause is not a signal to end, and never treat your very first reply as a sign the caller is done. Ask "Is there anything else I can help you with?" before closing. When there's nothing further, say: "I have forwarded this information to our staff, and they will call you back within one business day. Thank you for calling New West Centre Dental Clinic, Goodbye." Only mark the call as resolved once the caller has confirmed there's nothing else -- not just because one question got answered.
+ENDING THE CALL: Only wrap up when the caller gives a clear signal they're done -- for example "goodbye," "that's all," or they have nothing else after you've addressed their request. A brief pause is not a signal to end, and never treat your very first reply as a sign the caller is done. Ask "Is there anything else I can help you with?" before closing. When there's nothing further, say: "I have forwarded this information to our staff, and they will call you back within one business day. Thank you for calling New West Centre Dental Clinic, Goodbye!" Only mark the call as resolved once the caller has confirmed there's nothing else -- not just because one question got answered.
 
 Never claim to have booked, confirmed, or promised anything. You are only gathering information for the office to follow up on.
 """
@@ -155,5 +156,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
     finally:
         if call_sid and call_sid in sessions:
+            await save_call(sessions[call_sid])
             print("Call Ended: check here when disconnected")
             del sessions[call_sid]
