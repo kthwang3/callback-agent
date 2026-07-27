@@ -1,0 +1,4 @@
+your.domain {
+    # Reverse proxy traffic to the internal container name and port
+    reverse_proxy app:8080
+}

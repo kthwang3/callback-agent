@@ -1,4 +1,12 @@
 services:
+  app:
+    build: .
+    container_name: callbackagent-app
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
   postgres:
     image: postgres:17
     container_name: callbackagent-postgres
@@ -19,6 +27,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "5050:80"
+  
+  caddy:
+    image: caddy:2-alpine
+    container_name: callbackagent-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
 
 volumes:
   pgdata:
+  caddy_data:
+  caddy_config:

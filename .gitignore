@@ -3,3 +3,9 @@ test/
 __pycache__/
 .env
 *.Zone.Identifier
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log

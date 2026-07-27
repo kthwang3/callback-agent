@@ -23,7 +23,9 @@ async def voice():
     twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Connect>
-            <ConversationRelay url="{WS_URL}" welcomeGreeting="Hi, thanks for calling New West Centre Dental Clinic. How can I help you today?" />
+            <ConversationRelay url="{WS_URL}" 
+                welcomeGreeting="Hi, thanks for calling New West Centre Dental Clinic. How can I help you today?" 
+                interruptible="none"/>
         </Connect>
     </Response>"""
     return Response(content=twiml, media_type="text/xml")
