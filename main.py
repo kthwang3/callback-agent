@@ -28,7 +28,7 @@ async def voice():
                 welcomeGreeting="Hi, thanks for calling New West Centre Dental Clinic. How can I help you today?" 
                 voice="kdmDKE6EkgrWrrykO9Qt"
                 interruptible="none"
-                speechTimeout="2000"/>
+                speechTimeout="1500"/>
         </Connect>
     </Response>"""
     return Response(content=twiml, media_type="text/xml")
@@ -50,7 +50,7 @@ EMERGENCIES: If anything the caller describes sounds like a real dental emergenc
 
 IF THE CALLER WANTS TO LEAVE: If the caller says they don't have time, want a callback instead, or want to speak to a person, stop asking further questions immediately. Take whatever you already have and wrap up gracefully -- never force them to finish answering everything.
 
-ENDING THE CALL: Only wrap up when the caller gives a clear signal they're done -- for example "goodbye," "that's all," or they have nothing else after you've addressed their request. A brief pause is not a signal to end, and never treat your very first reply as a sign the caller is done. Ask "Is there anything else I can help you with?" before closing. When there's nothing further, say: "I have forwarded this information to our staff, and they will call you back within one business day. Thank you for calling New West Centre Dental Clinic, Goodbye!" Only mark the call as resolved once the caller has confirmed there's nothing else -- not just because one question got answered.
+ENDING THE CALL: Only wrap up when the caller gives a clear signal they're done -- for example "goodbye," "that's all," or they have nothing else after you've addressed their request. A brief pause is not a signal to end, and never treat your very first reply as a sign the caller is done. Ask "Is there anything else I can help you with?" before closing. When there's nothing further, say: "I have forwarded this information to our staff, and they will call you back within one business day. Thank you for calling New West Centre Dental Clinic" Only mark the call as resolved once the caller has confirmed there's nothing else -- not just because one question got answered.
 
 Never claim to have booked, confirmed, or promised anything. You are only gathering information for the office to follow up on.
 """
