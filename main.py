@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import asyncio
 from db import save_call
 from sms import send_sms
+import os
 load_dotenv()
 client = OpenAI()
 app = FastAPI()
@@ -15,7 +16,7 @@ async def root():
     return {"message": "hello world"}
 
 
-WS_URL = "wss://pillow-gdp-vacations-management.trycloudflare.com/ws"
+WS_URL = os.getenv("WS_URL")
 
 
 @app.post("/voice")
@@ -25,7 +26,9 @@ async def voice():
         <Connect>
             <ConversationRelay url="{WS_URL}" 
                 welcomeGreeting="Hi, thanks for calling New West Centre Dental Clinic. How can I help you today?" 
-                interruptible="none"/>
+                voice="kdmDKE6EkgrWrrykO9Qt"
+                interruptible="none"
+                speechTimeout="2000"/>
         </Connect>
     </Response>"""
     return Response(content=twiml, media_type="text/xml")
@@ -81,12 +84,17 @@ async def websocket_endpoint(websocket: WebSocket):
             if msg_type == "setup":
                 print("call started")
                 call_sid = message.get("callSid")
+                raw_number = message.get("from")
+                if raw_number:
+                    callback_number = raw_number[-10:]
+                else:
+                    callback_number = None
                 sessions[call_sid] = {
-                    "messages": [{"role": "developer", "content": systemPrompt + f"The callback number is {message.get('from')}. Confirm it's correct rather than asking cold."}],
+                    "messages": [{"role": "developer", "content": systemPrompt + f"The callback number is {callback_number}. Confirm it's correct rather than asking cold."}],
                     "urgent": False,
                     "resolved": False,
                     "caller_name": None,
-                    "callback_number": message.get("from"),
+                    "callback_number": callback_number,
                     "new_or_returning": None,
                     "day_preference": None,
                     "reason": None,
@@ -161,4 +169,5 @@ async def websocket_endpoint(websocket: WebSocket):
             await save_call(sessions[call_sid])
             await send_sms(sessions[call_sid])
             print("Call Ended")
+            print(sessions[call_sid])
             del sessions[call_sid]
