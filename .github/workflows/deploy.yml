@@ -27,12 +27,14 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build and push image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/arm64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/callback-agent:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: SSH into EC2, pull image, and setup containers
         uses: appleboy/ssh-action@v1.0.0
