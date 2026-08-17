@@ -46,6 +46,10 @@ resource "aws_instance" "web" {
   }
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   key_name = aws_key_pair.deployer.key_name
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
 
 resource "aws_security_group" "allow_tls" {
@@ -55,7 +59,7 @@ resource "aws_security_group" "allow_tls" {
 }
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
     security_group_id = aws_security_group.allow_tls.id
-    cidr_ipv4 = var.my_ip
+    cidr_ipv4 = "0.0.0.0/0"
     from_port = 22
     ip_protocol = "tcp"
     to_port = 22
