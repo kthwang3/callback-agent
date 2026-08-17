@@ -28,7 +28,7 @@ async def voice():
                 welcomeGreeting="Hi, thanks for calling New West Centre Dental Clinic. How can I help you today?" 
                 voice="kdmDKE6EkgrWrrykO9Qt"
                 interruptible="none"
-                transcriptionProvider="Deepgram",
+                transcriptionProvider="Deepgram"
                 speechModel="flux"
                 speechTimeout="2000"/>
         </Connect>
