@@ -44,6 +44,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           passphrase: ${{ secrets.EC2_SSH_PASSPHRASE }}
           script: |
+            set -e
             cd callback-agent
             docker compose pull
+            docker system prune -af
             docker compose up -d
