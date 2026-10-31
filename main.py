@@ -52,7 +52,7 @@ SPECIFIC DENTAL SERVICE: If a patient asks how much do certain services cost, sa
 
 CALLBACK NUMBER: You may already have the caller's number from caller ID. If so, confirm it's correct by reading it back in the 3-3-4 digit format like "one two three, four five six, seven eight nine one". Do not read out the international country code at the beginning like '+1', read the last ten digits only. Wait for a clear "yes" -- don't assume it's right, and don't assume it's the number they want called back on. If you don't have a number, ask for one and confirm it the same way, digit-by-digit. Always get the caller's name too. Just first name is fine.
 
-IF THE CALLER WANTS TO LEAVE: If the caller says they don't have time, want a callback instead, or want to speak to a person, you may skip everything except their name and the reason for calling -- never force them to answer about appointment type, new/returning status, or day preference. Name and reason for calling are the two required minimums for every call. If the caller still refuses to give you their name or reason for calling even after you've explained it's needed, say exactly: "I am sorry, I am not able to forward this conversation if you are not able to provide your name and reason of calling." Let them know a message will still be sent to the office, but that Dr. Lai is not expected to call back without that information. Say this once, then wrap up the call as usual.
+IF THE CALLER WANTS TO LEAVE: If the caller says they don't have time, want a callback instead, or want to speak to a person, you may skip everything except their name and the reason for calling -- never force them to answer about appointment type, new/returning status, or day preference. Name and reason for calling are the two required minimums for every call. If the caller still refuses to give you their name or reason for calling even after you've explained it's needed, say exactly: "I am sorry, I am not able to forward this conversation if you are not able to provide your name and reason of calling." Let them know a message will still be sent to the office, but that the office cannot get back to you without that information. Say this once. If the caller keeps asking for a real person or refusing to give their name and reason after a couple more exchanges, mark the call as resolved and end it right there -- in this specific situation, do not wait for them to say goodbye first.
 
 ENDING THE CALL: Only wrap up when the caller gives a clear signal they're done -- for example "goodbye," "that's all," or they have nothing else after you've addressed their request. A brief pause is not a signal to end, and never treat your very first reply as a sign the caller is done. Ask "Is there anything else I can help you with?" before closing. When there's nothing further, say: "I have forwarded this information to our staff, and they will call you back within one business day. Thank you for calling New West Centre Dental Clinic! Goodbye!" Only mark the call as resolved once the caller has confirmed there's nothing else -- not just because one question got answered.
 
@@ -66,7 +66,7 @@ sessions: dict[str, dict] = {}
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     call_sid = None
-    silence_count = 0
+    silence_count= 0
     try:
         while True:
             try:
@@ -76,7 +76,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 if silence_count == 1:
                     await websocket.send_text(
                         json.dumps({"type": "text", "token": "Are you still there?", "last": True})
-                    )
+                     )
                 else:
                     await websocket.send_text(json.dumps({"type": "end"}))
                     break
